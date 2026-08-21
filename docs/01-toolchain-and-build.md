@@ -120,7 +120,7 @@ set(BUILD_GAMES    OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(
   raylib
   GIT_REPOSITORY https://github.com/raysan5/raylib.git
-  GIT_TAG        5.5
+  GIT_TAG        6.0
   GIT_SHALLOW    TRUE
 )
 FetchContent_MakeAvailable(raylib)
@@ -140,10 +140,18 @@ Line by line:
 - **`CMAKE_EXPORT_COMPILE_COMMANDS ON`** — writes `build/compile_commands.json`.
   This is what gives clangd / VS Code working autocomplete and go-to-definition.
   Turn it on now; debugging "why is intellisense dead" later is miserable.
-- **`FetchContent_Declare` / `MakeAvailable`** — clone raylib at tag `5.5` into
+- **`FetchContent_Declare` / `MakeAvailable`** — clone raylib at tag `6.0` into
   `build/_deps/` and add it to *your* build as a subproject. `GIT_SHALLOW` skips
   its history (~faster clone). Pinning `GIT_TAG` to a version rather than `master`
   is what makes your Windows machine build the same raylib as your Mac.
+
+> **Spell `GIT_TAG` carefully.** CMake does not validate keyword names — a typo like
+> `GIT_TAB` is *silently ignored*, not rejected. With no `GIT_TAG`, FetchContent falls
+> back to the default branch, so you end up building an unpinned development snapshot
+> while believing you pinned a release. Verify with
+> `git -C build/_deps/raylib-src describe --all` — it should name your tag, not
+> `heads/master`. Changing the tag also requires deleting `build/`; FetchContent caches
+> and will not re-fetch on its own.
 - **`target_link_libraries(game PRIVATE raylib)`** — the payoff. raylib's own CMake
   config carries its platform requirements with it, so linking this one target
   pulls in Cocoa/IOKit/CoreVideo/OpenGL on macOS and the right Windows SDK libs on
