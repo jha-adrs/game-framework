@@ -1,0 +1,114 @@
+# 02 — Window and Color
+
+Goal: a window whose background color changes over time, with no input.
+
+Sounds trivial. It contains the two ideas that every frame of every game you ever
+write is built on.
+
+## The shape of the program
+
+Four regions, in order:
+
+1. **Include and set up.** Include the header. Call the init function with width,
+   height, title. Optionally set a target framerate — think about *why* a library
+   would need you to state that, rather than just running as fast as possible.
+2. **The loop.** A `while` whose condition is a raylib function meaning "has the
+   user tried to quit?" (ESC or the close button). This is the game loop.
+3. **Inside the loop, a Begin/End drawing pair.** All drawing calls go *between*
+   them. This will feel like pointless ceremony. It is not — see below.
+4. **After the loop, close the window.** Cleanup.
+
+Functions to find in `raylib.h`: `InitWindow`, `WindowShouldClose`, `SetTargetFPS`,
+`BeginDrawing`, `EndDrawing`, `ClearBackground`, `CloseWindow`. Grab `DrawText` too,
+so you can see something other than flat color.
+
+## Idea 1 — Your program is a loop now, not a script
+
+Coming from scripts and request handlers, this is the shift: the program is not
+"do a thing, exit." It is "do a thing sixty times a second, forever, until told to
+stop." Everything that persists must live *outside* the loop; everything that
+happens lives *inside* it. Chapter 03 pushes on that distinction hard.
+
+## Idea 2 — Immediate mode: the screen is a function of your state
+
+There is no scene graph. No `addChild`, no retained display objects, nothing
+persists between frames. Every frame you wipe the screen and re-issue **every**
+draw call from scratch.
+
+Coming from the DOM this is backwards, and it is the thing to internalise:
+
+> The screen is a pure function of your state, recomputed 60 times a second.
+
+Nothing on screen "exists." Stop drawing it and it is gone that instant.
+
+That is why `ClearBackground` belongs *inside* the loop, not in setup.
+
+**Do this deliberately once:** draw a moving shape, then comment out the clear.
+Watch it smear trails across the window — those are old frames nobody erased.
+You will never mis-model this again after seeing it.
+
+## Idea 3 — Why Begin/End exists: double buffering
+
+You are not drawing to the screen. You are drawing to an off-screen buffer.
+`EndDrawing` swaps that finished buffer with the one currently displayed, in one
+atomic flip.
+
+If you drew straight to the visible screen, the user would watch your background
+paint over the old frame, then your shapes pop in one at a time — flicker and
+tearing. The Begin/End pair is the boundary of *"one complete frame, assembled in
+private, shown all at once."*
+
+This also explains why drawing outside the pair silently does nothing, which is
+the usual cause of "my window is just black."
+
+## The colors part — actually explore
+
+Getting one window open is not the exercise. Do all four:
+
+1. **Named colors.** raylib ships ~25 as macros — `RAYWHITE`, `MAROON`, `SKYBLUE`,
+   `DARKPURPLE`. Find the list in the header. Note they are `Color` *values*, not
+   an enum.
+2. **Build one yourself.** `Color` is a plain struct of four `unsigned char`s:
+   red, green, blue, alpha, each `0–255`. raylib is a C library, so no
+   constructors — brace-initialise it. Work out how to pass an arbitrary color
+   straight into `ClearBackground`.
+3. **Make it move.** Find `GetTime()` — seconds since start, as a `double`. Run it
+   through `sin()` (`#include <cmath>`) to oscillate a channel. Watch the window
+   breathe. Note the range mismatch: `sin` gives you −1…1 and you need 0…255.
+   Fixing that mapping yourself is the point.
+4. **Then do it properly with HSV.** Find `ColorFromHSV` in the header and cycle
+   *hue* instead of RGB. Compare the two side by side. RGB cycling looks muddy and
+   passes through grey; HSV cycling looks like a rainbow. That difference is a real
+   graphics insight about color spaces, not trivia.
+
+Step 3 is the first time you write **`state = f(time)` inside a loop that redraws
+everything.** That pattern is every game you will ever write. The colors are an
+excuse.
+
+## macOS gotchas
+
+- The window sometimes opens **behind** your terminal. Cmd-Tab before assuming
+  it's broken.
+- On a Retina display an 800×600 window may look soft. Look for `SetConfigFlags`
+  and the `FLAG_WINDOW_HIGHDPI` flag — and note it must be called *before*
+  `InitWindow`. Think about why ordering matters for a flag like that.
+- Window flashes and vanishes → your loop condition is wrong or missing.
+- Black window, nothing in it → you're drawing outside the Begin/End pair.
+
+## Windows gotchas
+
+- First run may trip Windows Defender / SmartScreen on an unsigned exe. Expected.
+- If you get a console window *behind* your game window, that's the default
+  subsystem. Leave it for now — it's where your debug prints go, and you'll want
+  them. Chapter 16 deals with hiding it.
+
+## Definition of done
+
+- [ ] Window opens on macOS
+- [ ] Window opens on Windows
+- [ ] Background is a color I built from raw RGBA numbers
+- [ ] Background cycles over time using `GetTime()`
+- [ ] I tried the HSV version and can explain why it looks better
+- [ ] I deliberately removed `ClearBackground` and saw the smearing
+
+Next: [03 — Input, State and Motion](03-input-state-motion.md)

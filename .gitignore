@@ -1,0 +1,54 @@
+# ---- C/C++ build output ----
+build/
+out/
+bin/
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe
+*.pdb
+*.ilk
+*.exp
+*.d
+a.out
+game
+game.exe
+
+# ---- CMake ----
+CMakeCache.txt
+CMakeFiles/
+CMakeUserPresets.json
+cmake_install.cmake
+Makefile
+compile_commands.json
+_deps/
+
+# ---- IDE / editor ----
+.vs/
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+*.user
+*.suo
+*.sln
+*.vcxproj*
+.cache/
+
+# ---- OS junk ----
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+desktop.ini
+
+# ---- Node (docs tooling only) ----
+node_modules/
+
+# Playwright MCP scratch output
+.playwright-mcp/

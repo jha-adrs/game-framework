@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>game-framework docs</title>
+<link rel="icon" href="data:,">
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1c1c1e; --muted: #6b7280; --line: #e5e7eb;
+    --side: #f7f7f8; --accent: #b3421a; --code-bg: #f3f4f6; --sel: #ece9e6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16161a; --fg: #e6e6e6; --muted: #9a9aa2; --line: #2c2c33;
+      --side: #101013; --accent: #e0834f; --code-bg: #1e1e24; --sel: #24242b;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg); color: var(--fg); display: flex;
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  nav {
+    width: 290px; flex: 0 0 290px; background: var(--side);
+    border-right: 1px solid var(--line); overflow-y: auto; height: 100vh; padding: 22px 0 40px;
+  }
+  nav h2 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .09em;
+    color: var(--muted); margin: 20px 20px 8px; font-weight: 600;
+  }
+  nav h2:first-child { margin-top: 0; }
+  nav a {
+    display: block; padding: 7px 20px; color: var(--fg); text-decoration: none;
+    font-size: 13.5px; border-left: 3px solid transparent;
+  }
+  nav a:hover { background: var(--sel); }
+  nav a.active { border-left-color: var(--accent); background: var(--sel); font-weight: 600; }
+  main { flex: 1; overflow-y: auto; height: 100vh; }
+  article { max-width: 780px; margin: 0 auto; padding: 56px 40px 140px; }
+  article h1 { font-size: 2em; line-height: 1.2; margin: 0 0 .7em; letter-spacing: -0.02em; }
+  article h2 { font-size: 1.35em; margin: 2.1em 0 .6em; padding-bottom: .25em; border-bottom: 1px solid var(--line); }
+  article h3 { font-size: 1.08em; margin: 1.7em 0 .4em; }
+  article a { color: var(--accent); }
+  article code {
+    background: var(--code-bg); padding: .15em .4em; border-radius: 4px;
+    font: .87em/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  article pre {
+    background: var(--code-bg); padding: 15px 17px; border-radius: 7px;
+    overflow-x: auto; border: 1px solid var(--line);
+  }
+  article pre code { background: none; padding: 0; font-size: .84em; line-height: 1.55; }
+  article table { border-collapse: collapse; width: 100%; margin: 1.3em 0; font-size: .92em; display: block; overflow-x: auto; }
+  article th, article td { border: 1px solid var(--line); padding: 8px 11px; text-align: left; vertical-align: top; }
+  article th { background: var(--code-bg); font-weight: 600; }
+  article blockquote {
+    margin: 1.3em 0; padding: .3em 0 .3em 18px;
+    border-left: 3px solid var(--accent); color: var(--muted); font-style: italic;
+  }
+  article ul, article ol { padding-left: 1.4em; }
+  article li { margin: .3em 0; }
+  article li:has(> input[type=checkbox]) { list-style: none; margin-left: -1.25em; }
+  article input[type=checkbox] { margin-right: .5em; accent-color: var(--accent); }
+  article hr { border: 0; border-top: 1px solid var(--line); margin: 2.5em 0; }
+  .pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 4em;
+           padding-top: 1.5em; border-top: 1px solid var(--line); font-size: .9em; }
+  .pager a { color: var(--accent); text-decoration: none; }
+  @media (max-width: 860px) {
+    body { flex-direction: column; }
+    nav { width: 100%; flex: none; height: auto; max-height: 42vh; border-right: 0; border-bottom: 1px solid var(--line); }
+    main { height: auto; }
+    article { padding: 32px 22px 90px; }
+  }
+</style>
+</head><body>
+<nav id="nav"></nav>
+<main><article id="content">Loading&hellip;</article></main>
+<script src="/vendor/marked.min.js"></script>
+<script>
+let DOCS = [];
+
+function partHeading(file) {
+  const n = parseInt(file, 10);
+  if (n === 0) return 'Overview';
+  if (n <= 5) return 'Part 1 — Foundations';
+  if (n <= 13) return 'Part 2 — Toward a framework';
+  return 'Part 3 — Engineering';
+}
+
+function buildNav(current) {
+  const nav = document.getElementById('nav');
+  nav.innerHTML = '';
+  let lastPart = null;
+  for (const d of DOCS) {
+    const part = partHeading(d.file);
+    if (part !== lastPart) {
+      const h = document.createElement('h2');
+      h.textContent = part;
+      nav.appendChild(h);
+      lastPart = part;
+    }
+    const a = document.createElement('a');
+    a.href = '#' + d.file;
+    a.textContent = d.title;
+    if (d.file === current) a.className = 'active';
+    nav.appendChild(a);
+  }
+}
+
+function pager(current) {
+  const i = DOCS.findIndex(d => d.file === current);
+  const prev = i > 0 ? DOCS[i - 1] : null;
+  const next = i >= 0 && i < DOCS.length - 1 ? DOCS[i + 1] : null;
+  const div = document.createElement('div');
+  div.className = 'pager';
+  const left = document.createElement('div');
+  const right = document.createElement('div');
+  if (prev) {
+    const a = document.createElement('a');
+    a.href = '#' + prev.file;
+    a.textContent = '← ' + prev.title;
+    left.appendChild(a);
+  }
+  if (next) {
+    const a = document.createElement('a');
+    a.href = '#' + next.file;
+    a.textContent = next.title + ' →';
+    right.appendChild(a);
+  }
+  div.appendChild(left);
+  div.appendChild(right);
+  return div;
+}
+
+async function render() {
+  const file = location.hash.slice(1) || (DOCS[0] && DOCS[0].file);
+  if (!file) return;
+  const art = document.getElementById('content');
+  const res = await fetch('/docs/' + encodeURIComponent(file));
+  if (!res.ok) { art.textContent = 'Not found: ' + file; return; }
+  const md = await res.text();
+  art.innerHTML = marked.parse(md, { gfm: true, breaks: false });
+  art.querySelectorAll('a[href$=".md"]').forEach(a => {
+    const href = a.getAttribute('href');
+    if (!/^https?:/.test(href)) {
+      a.setAttribute('href', '#' + href.replace(/^.*\//, ''));
+    }
+  });
+  art.appendChild(pager(file));
+  buildNav(file);
+  document.title = file.replace(/\.md$/, '') + ' · game-framework';
+  document.querySelector('main').scrollTop = 0;
+}
+
+(async () => {
+  try {
+    DOCS = await (await fetch('/api/docs')).json();
+    await render();
+    window.addEventListener('hashchange', render);
+  } catch (err) {
+    document.getElementById('content').textContent = 'Failed to load docs: ' + err.message;
+  }
+})();
+</script>
+</body></html>
