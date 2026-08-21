@@ -3,6 +3,29 @@
 Three small subsystems. Grouped because none needs a chapter of its own, and because
 the third is the one that pays for itself fastest.
 
+## C++ you'll meet here
+
+- **`std::string` and `.c_str()`** — raylib takes `const char*`, so this is your
+  bridge. Note the lifetime hazard: `.c_str()` on a temporary dangles as soon as the
+  full expression ends.
+- **C variadic functions** — raylib's `TextFormat` is `printf`-style varargs. They are
+  **not type-checked**: passing an `int` where `%s` is expected is undefined behaviour,
+  not a compile error. Also, `TextFormat` returns a pointer into a rotating internal
+  static buffer, so holding onto the result across frames is a bug. Both worth knowing.
+- **`std::format`** (C++20) / **fmt** — the type-safe replacement. Worth knowing what
+  you're missing on C++17, and a reason you might bump the standard.
+- **Lambdas vs function pointers** — for a button's on-click. A capture-less lambda
+  converts to a function pointer; a capturing one does not. That surprises people.
+- **`std::string_view`** (C++17) — a non-owning view over characters. The right
+  parameter type for "some text I only read," avoiding a copy. Same dangling caveat
+  as `.c_str()`.
+- **Static local variables** — `static bool showDebug = false;` inside a function
+  persists across calls. Genuinely handy for debug toggles, and a good place to
+  understand that `static` means at least three different things in C++ depending on
+  context.
+
+Fuzzy? [01a — C++ Refresher](01a-cpp-refresher.md) sections 8 and 9.
+
 ## Audio
 
 `InitAudioDevice()` before loading anything, `CloseAudioDevice()` at the end — the
@@ -60,6 +83,28 @@ guess.
   are enough. This changes tuning from a chore into something you'll actually do,
   which is how games get good.
 - **Slow-motion / fast-forward.** Scale your fixed timestep. Trivial once 07 exists.
+
+## Exercises
+
+1. **Varargs are not type-safe.** Call `TextFormat("%d", "hello")` and
+   `TextFormat("%s", 42)`. Note they compile. Observe what happens at runtime. Then
+   turn on `-Wformat` and see the compiler catch it *for the printf-family* — and
+   consider why it can't help you in general.
+2. **The rotating buffer.** Store the `const char*` from `TextFormat` in a variable,
+   call `TextFormat` a dozen more times, then draw the stored pointer. Watch it change
+   out from under you.
+3. **Sound spam.** Play a hit sound on `IsKeyDown` instead of `IsKeyPressed`. Listen
+   to the distortion. Then fix it. Then add random pitch variation and A/B the two —
+   this is the cheapest game-feel win on the whole roadmap.
+4. **Your own button.** Write an immediate-mode button: takes a rect and a label,
+   returns `bool` for clicked-this-frame. About 15 lines. Then explain how it relates
+   to chapter 02's immediate-mode idea.
+5. **Capture-less conversion.** Assign a capture-less lambda to a function pointer.
+   Then add a capture and watch it fail to compile. Understand why.
+6. **The debug overlay.** F1 toggle with a `static` local. FPS, worst frame time,
+   entity count, current scene. Then add collision-shape wireframes and a
+   pause-and-single-step key. These three are the highest-value tools on the roadmap;
+   build them properly.
 
 ## Definition of done
 

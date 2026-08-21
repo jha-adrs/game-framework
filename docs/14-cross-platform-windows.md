@@ -4,6 +4,31 @@ CMake gets you *compiling* on both machines. It does not get you *behaving the s
 on both. This is a list of the specific things that will differ, roughly in the order
 you'll meet them.
 
+## C++ you'll meet here
+
+- **Preprocessor conditionals** — `#if defined(_WIN32)` / `#elif defined(__APPLE__)`.
+  Prefer `#if defined(X)` over `#ifdef X`: it composes with `&&` and `!`.
+- **Platform macros** — `_WIN32` (defined on 64-bit Windows too, despite the name),
+  `__APPLE__`, `__linux__`. Compiler macros: `_MSC_VER`, `__clang__`, `__GNUC__`.
+- **Macros are textual and hostile** — `windows.h`'s `min`/`max` macros break
+  `std::min`/`std::max` at every call site with an incomprehensible error. `NOMINMAX`
+  is the fix. This is the best possible argument for `constexpr` over `#define` in
+  your own code.
+- **`<cstdint>`** — `int32_t`, `uint8_t`. Use these for anything written to disk or
+  sent over a wire, where "however wide `int` is here" isn't good enough.
+- **`std::filesystem`** (`<filesystem>`, C++17) — `path`, `exists`, `current_path`.
+  Handles separators for you. Note it needed a separate link flag on older toolchains;
+  on your two it should just work.
+- **`static_assert`** — compile-time checks. `static_assert(sizeof(void*) == 8)` if
+  you want to refuse 32-bit builds loudly rather than mysteriously.
+- **Per-compiler warning flags in CMake** — `if(MSVC) ... else() ...`. MSVC wants
+  `/W4`, clang wants `-Wall -Wextra`. Fixing both compilers' warnings finds real bugs
+  neither finds alone.
+- **`#pragma warning(push/pop)`** (MSVC) and `#pragma clang diagnostic` — for
+  silencing a warning in third-party headers without disabling it project-wide.
+
+Fuzzy? [01a — C++ Refresher](01a-cpp-refresher.md) sections 4, 11 and 12.
+
 ## The raylib / windows.h name collisions (real, and confusing)
 
 `windows.h` defines symbols that clash with raylib's API. If anything in your build
@@ -99,6 +124,26 @@ you inherit the whole "DLL not found" class of problems on Windows.
 Commit on one machine, pull on the other, build, run. Anything that differs is a bug
 you now know about. Do this **regularly**, not once at the end — a month of drift is
 much harder to unpick than a day of it.
+
+## Exercises
+
+1. **One platform branch.** Write a function returning the platform name via
+   `#if defined`. Confirm it reports correctly on both machines. Keep it small — the
+   goal is one place where platform code lives, not `#ifdef` scattered everywhere.
+2. **Feel the macro problem.** On Windows, include `windows.h` before your code and
+   call `std::min`. Read the error. Add `NOMINMAX`. Read the difference. This is the
+   most confusing error in the chapter and it's worth meeting deliberately.
+3. **Warnings, both compilers.** Add per-compiler warning flags to CMakeLists. Build
+   clean on both. Write down anything one compiler caught that the other didn't —
+   there is usually at least one.
+4. **Working directory.** Print `std::filesystem::current_path()` at startup. Run
+   from the terminal, from your IDE, and by double-clicking the binary. Three
+   different answers. Now fix asset loading with `GetApplicationDirectory` so all
+   three work.
+5. **Asset copy step.** Make CMake copy `assets/` next to the binary post-build.
+   Confirm a fresh `build/` directory produces a runnable layout with no manual steps.
+6. **Debug vs Release.** Time your worst frame in both configs. Note the multiple.
+   Then remember this number the next time something "feels slow."
 
 ## Definition of done
 

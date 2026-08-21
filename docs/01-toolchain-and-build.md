@@ -48,6 +48,7 @@ phase) and `-L` / `-l` (where to find *libraries* and which ones, link phase).
 | `'raylib.h' file not found` | compile | include path wrong (`-I`) |
 | `unknown type name 'Color'` | compile | header not actually included |
 | `use of undeclared identifier 'DrawCircle'` | compile | typo, or wrong header |
+| `Undefined symbols: _main, referenced from <initial-undefines>` | **link** | no `main` function anywhere — see below |
 | `Undefined symbols: _InitWindow` | **link** | library not linked (`-l`), or not found (`-L`) |
 | `ld: library not found for -lraylib` | **link** | library path wrong |
 | `LNK2019: unresolved external symbol` | **link** (MSVC) | same as "undefined symbols" |
@@ -55,6 +56,19 @@ phase) and `-L` / `-l` (where to find *libraries* and which ones, link phase).
 
 Ninety percent of beginner suffering is misreading a link error as a compile error
 and editing includes for an hour.
+
+**The `_main` case deserves its own note**, because it looks exactly like a missing
+library but isn't. An executable target *always* requires a symbol named `main` (the
+leading underscore is macOS's C naming convention). That requirement isn't something
+your code referenced — the linker synthesises it before reading any of your objects,
+which is what `referenced from <initial-undefines>` means. So:
+
+- `_InitWindow` missing → a **library** symbol is absent → fix your linker flags.
+- `_main` missing → your **program has no entry point** → write one.
+
+A file containing only `#include "raylib.h"` compiles perfectly cleanly, which is why
+this catches people: nothing is wrong with your translation unit, it just isn't a
+program yet. raylib can't supply `main` either — its job is to be called *from* yours.
 
 ## Prerequisites
 
@@ -170,6 +184,26 @@ toolchain is done and every later error is *your* code, not your setup.
 
 Verifying that separation now is worth the extra five minutes.
 
+## Exercises
+
+Break the build on purpose. The goal is to make chapter 01's error table something
+you *recognise* rather than something you look up.
+
+1. **No entry point.** Reduce `src/main.cpp` to just the `#include`, with no `main`.
+   Build. You should get `Undefined symbols: _main, referenced from
+   <initial-undefines>`. Note that it *compiled* fine — the object file was valid,
+   the program just had nowhere to start.
+2. **Missing header.** Change the include to `"raylibb.h"`. Note this fails at a
+   completely different stage, before any linking happens.
+3. **Missing library.** Comment out the `target_link_libraries` line, restore a real
+   `main` that calls `InitWindow`, and build. Now you get `Undefined symbols:
+   _InitWindow` — a *link* error, and the reason the `-l` flag exists.
+4. **Declaration without definition.** Keep the library linked, but write
+   `void doesNotExist();` at the top of the file and call it from `main`. Compiles,
+   fails to link. Same category as #3, but the missing definition is yours.
+5. Now write down, from memory, which of those four are compile errors and which are
+   link errors.
+
 ## Definition of done
 
 - [ ] `brew install cmake` on macOS
@@ -179,4 +213,4 @@ Verifying that separation now is worth the extra five minutes.
 - [ ] Same commit compiles and links on Windows
 - [ ] You can state, without looking, the difference between a compile error and a link error
 
-Next: [02 — Window and Color](02-window-and-color.md)
+Next: [01a — C++ Refresher](01a-cpp-refresher.md)

@@ -6,6 +6,26 @@ This is the most important chapter in Part 1. Not because collision is hard, but
 because finishing is. Most self-taught game programmers have thirty half-built
 prototypes and zero games, and the skills you're missing are all in the last 10%.
 
+## C++ you'll meet here
+
+- **`enum class` + `switch`** — for `Title` / `Playing` / `GameOver`. Omit a case and
+  `-Wswitch` warns you, which is exactly the safety net you want as states multiply.
+- **`std::vector<T>`** — your brick array. `push_back`, `size()`, range-for, and the
+  removal problem below.
+- **Range-for with `&`** — `for (auto& brick : bricks)` mutates; without the `&` you
+  modify copies and nothing happens. The single most common silent no-op in C++.
+- **Removing while iterating** — erasing inside a range-for is undefined behaviour.
+  Learn `std::erase_if` (C++20) or the erase-remove idiom, or use swap-and-pop.
+  Chapter 11 goes deeper; you need *one* working approach now.
+- **`struct` composition** — a `Ball` that *has* a `Vector2 pos` and `Vector2 vel`,
+  rather than four loose floats. Grouping related data is the cheapest design win here.
+- **`const` member functions / `const&` params** — `bool isColliding(const Rect& a,
+  const Rect& b)` documents that collision *detection* changes nothing, which keeps
+  detection and resolution mentally separate.
+- **Functions returning `bool`** — and naming them as questions (`isDead`, `hasWon`).
+
+Fuzzy? [01a — C++ Refresher](01a-cpp-refresher.md) sections 9 and 10.
+
 ## Collision: two shapes, that's all you need
 
 raylib gives you these — find them in `raylib.h`:
@@ -86,6 +106,25 @@ Everything above is the easy part. These are the things you have never done:
   "game feel") and it's mostly cheap tricks.
 - **Give it to someone.** A friend, a sibling, anyone. Watch them play without
   explaining. You will learn more in ninety seconds than in a week of solo work.
+
+## Exercises
+
+1. **Derive AABB.** Write overlap from the four *separation* cases and negate, rather
+   than copying four inequalities. Then test it against `CheckCollisionRecs` on a few
+   hundred random pairs and assert they agree. Any disagreement is a real edge case
+   worth understanding — start with exactly-touching edges.
+2. **The `auto` no-op, for real.** Loop your bricks with `for (auto b : bricks)` and
+   set `b.alive = false` on collision. Nothing dies. Fix it with one character.
+3. **Removal, three ways.** Implement brick removal with (a) swap-and-pop,
+   (b) mark-dead-then-sweep, (c) `std::erase_if`. Keep one. Write down why.
+4. **Detection vs resolution.** Make your player move diagonally into a wall corner.
+   First zero both axes on collision — feel it stick. Then resolve per axis and feel
+   it slide. That difference is the whole point of the chapter.
+5. **State machine.** `enum class GameState` plus `switch`. Deliberately omit
+   `GameOver` from the switch and read the `-Wswitch` warning. Then handle it.
+6. **Reset.** Write a function that returns the game to its starting state. If you
+   can't do it in one obvious place, your state is scattered — that's the finding,
+   and fixing it is the exercise.
 
 ## Definition of done
 

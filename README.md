@@ -15,6 +15,12 @@ Each doc gates on the previous one **actually working on both machines**. The la
 chapters are deliberately thin — they describe the problem to solve and the questions
 to answer, not the API to write. Those decisions need real code in front of them.
 
+C++ itself is taught alongside, not upfront: [`01a`](docs/01a-cpp-refresher.md) is a
+refresher for someone who's forgotten the details, and every chapter after it opens
+with **C++ you'll meet here** — the language features that chapter makes worth
+learning — and closes with **Exercises**, several of which deliberately break
+something so the failure is visible rather than theoretical.
+
 ## Reading the docs in a browser
 
 ```

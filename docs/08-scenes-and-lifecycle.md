@@ -7,6 +7,34 @@ means remembering which of forty variables belong to which screen.
 
 **The fix:** make a scene a *thing* with a lifecycle, and give each one its own state.
 
+## C++ you'll meet here
+
+The biggest object-oriented C++ chapter. Much of this will look familiar from Java,
+but the memory and lifetime rules are entirely different.
+
+- **Inheritance and `virtual`** — `struct Scene` with virtual `enter/update/render/exit`.
+  A virtual call dispatches on the *runtime* type through a vtable pointer.
+- **`virtual` destructor** — **the critical one.** Deleting a derived object through a
+  base pointer without a virtual destructor is undefined behaviour: the derived
+  destructor never runs, so its resources leak. If a class has any virtual function,
+  it needs a virtual destructor. No exceptions.
+- **Pure virtual / abstract base** — `virtual void update(float) = 0;` makes `Scene`
+  impossible to instantiate and forces every scene to implement it.
+- **`override`** — always write it. It makes the compiler verify you're actually
+  overriding, catching signature typos that would otherwise silently create a new
+  unrelated function. A genuinely valuable keyword.
+- **`std::unique_ptr<Scene>`** (`<memory>`) — owning, non-copyable, frees
+  automatically. `std::vector<std::unique_ptr<Scene>>` is your scene stack.
+  Note it can't be copied, only moved — which is chapter 10's topic arriving early.
+- **`std::make_unique<TitleScene>(...)`** — how you construct one.
+- **Slicing** — assigning a derived object to a base *value* silently truncates it.
+  Polymorphism only works through references and pointers.
+- **`std::variant`** (`<variant>`, C++17) — the non-virtual alternative, if you want
+  to see the other approach.
+
+Fuzzy on ownership? Read [10 — Resources and RAII](10-resources-and-raii.md) first;
+this chapter leans on it.
+
 ## The shape
 
 A scene needs, at minimum: enter, update, render, exit. In C++ that's a base class
@@ -43,6 +71,26 @@ for free. It's the reason to prefer a stack from the start.
 
 - *Game Programming Patterns*, "State" chapter — covers exactly this, including the
   stack. Also "Subclass Sandbox" for what a scene base class should provide.
+
+## Exercises
+
+1. **The virtual destructor bug.** Give a base and a derived class destructors that
+   print. Delete a derived object through a base pointer *without* `virtual` on the
+   base destructor. Observe only one message. Add `virtual`. Observe both. Then run
+   the broken version under ASan and read the leak report.
+2. **`override` earns its keep.** Override `update(float dt)` but type the parameter
+   as `double` by mistake. Without `override` it compiles and silently never gets
+   called. With `override` it's a compile error. Do both.
+3. **Slicing.** Assign a derived scene to a `Scene` *value* (not reference). Call a
+   virtual function. Note which implementation runs, and why.
+4. **The stack.** Implement push/pop, then a pause scene that renders the game
+   underneath without updating it. Getting "update the top, render the whole stack"
+   working is the payoff of the whole chapter.
+5. **The transition bug.** Deliberately delete the current scene from inside its own
+   `update()`. Run under ASan. Read the use-after-free. Then implement queued
+   transitions.
+6. **The other way.** Reimplement two scenes with `std::variant` plus `std::visit`
+   instead of virtual functions. Decide which you prefer and be able to defend it.
 
 ## Definition of done
 

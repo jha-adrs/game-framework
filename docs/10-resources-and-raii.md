@@ -5,6 +5,38 @@ could have done in any language. This is the part that has no equivalent in
 JS or Java, and raylib's C API is an unusually good teacher because it makes the
 problem impossible to ignore.
 
+## C++ you'll meet here
+
+**This is the C++ chapter.** Everything else on the roadmap you could have learned in
+another language. Take it slowly.
+
+- **Constructor / destructor** — acquire and release. The whole of RAII.
+- **Copy constructor and copy assignment** — what runs on `Texture b = a;` and
+  `b = a;`. They're generated for you by default, and for a GPU handle the default is
+  *wrong*.
+- **`= delete`** — banning an operation at compile time. `Texture(const Texture&) = delete;`
+  turns a runtime double-free into a compile error.
+- **Move constructor and move assignment** — steal the handle, then null the source's
+  handle so its destructor becomes a harmless no-op. Leaving the source *valid and
+  destructible* is the crux; get this and you understand moves.
+- **`std::move`** — a cast, not a function that moves anything. It marks a value as
+  "you may steal from this." Misunderstanding this is near-universal.
+- **`std::exchange`** (`<utility>`) — the tidy way to write "take the value and leave
+  a replacement," which is exactly a move.
+- **Rule of zero / three / five** — if you manage a resource, you owe the compiler a
+  consistent set. If you *don't*, declare none of them and let the compiler win.
+- **`noexcept`** on moves — matters for `std::vector` reallocation performance.
+- **`std::unique_ptr` / `std::shared_ptr`** (`<memory>`) — unique for sole ownership,
+  shared for the cache in the second half. Be able to say why the cache needs shared.
+- **Custom deleters** — `unique_ptr<Texture2D, void(*)(Texture2D*)>` would have done
+  much of your wrapper's job. Write it by hand first anyway.
+- **Static / global destruction order** — the raylib trap: a static wrapper's
+  destructor runs *after* `CloseWindow()`. This is why "no graphics resource in a
+  global" is a rule, not a preference.
+
+Fuzzy? [01a — C++ Refresher](01a-cpp-refresher.md) sections 1, 2 and 8 are the
+prerequisites here.
+
 ## The problem
 
 raylib resources come in `Load` / `Unload` pairs:
@@ -106,6 +138,33 @@ places loads it three times.
 - cppreference on rule of three/five/zero, and on move semantics.
 - Scott Meyers, *Effective Modern C++*, items 17–25 — the definitive treatment of
   moves and perfect forwarding. Dense; read items 23 and 25 first.
+
+## Exercises
+
+1. **Watch the double free.** Give a wrapper a destructor that prints the handle it's
+   unloading. Copy the object with the compiler-generated copy constructor. Let both
+   die. See the same handle released twice. This is the bug the rest of the chapter
+   exists to prevent.
+2. **Ban the copy.** `= delete` the copy constructor and copy assignment. Confirm
+   exercise 1 now fails to *compile*. Read the error message properly — you'll see it
+   again when you accidentally put one in a `vector`.
+3. **Implement the move.** Move constructor and move assignment. Print in both. Then
+   deliberately *forget* to null the source's handle and watch the double free come
+   back. That omission is the entire lesson.
+4. **Self-assignment.** Write `t = std::move(t);`. Does your move assignment survive
+   it? Most first attempts don't. Fix it and note what guard you needed.
+5. **`std::move` is not a move.** Print inside your move constructor, then call
+   `std::move(x)` and *don't* assign the result to anything. Observe that nothing
+   happens. Explain why.
+6. **In a vector.** Put your wrappers in a `std::vector` and `push_back` past capacity.
+   Watch reallocation invoke your move constructor N times. Add `noexcept` and observe
+   whether the behaviour changes.
+7. **The static-destruction trap.** Make a `static` texture wrapper at file scope.
+   Run it. Watch it crash or misbehave at shutdown, after `CloseWindow`. Then fix it by
+   scoping ownership properly. Worth feeling once — the stack trace is useless, which
+   is exactly why the rule exists.
+8. **Leak check.** Run the finished thing under `leaks` (macOS) or VS diagnostics.
+   Zero leaks, or find out why.
 
 ## Definition of done
 

@@ -16,7 +16,30 @@ on a whiteboard before writing a game.
   Do not skip to a tutorial. The header is the documentation and learning to
   read a C header is half the skill you're here for.
 
+Every chapter from 02 on has two extra sections:
+
+- **C++ you'll meet here** — near the top. The language features this chapter
+  introduces and why *this* problem is what makes them worth learning. Read it
+  before you start writing. It links back to
+  [01a — C++ Refresher](01a-cpp-refresher.md) when something needs more than a
+  reminder.
+- **Exercises** — just before the checklist. Small, and several deliberately
+  make something break so you can see the failure rather than read about it.
+  The ones that say "run this under ASan" are the highest-value ones on the
+  roadmap; don't skip them because the code "looks fine."
+
+The C++ is spread across the chapters on purpose. Learning move semantics in the
+abstract is miserable; learning it because a copied `Texture2D` just double-freed
+a GPU handle takes about ten minutes and sticks permanently.
+
 ## The three parts
+
+### Interlude — 01a, C++ Refresher
+Not a chapter. The C++-shaped subset you need for everything that follows, for
+someone fluent in another language who has forgotten the details. Its exercises
+are plain console programs — no raylib, no CMake, instant feedback. Read it after
+chapter 01 and return to it whenever a **C++ you'll meet here** section names
+something fuzzy.
 
 ### Part 1 — Foundations (chapters 01–05)
 Detailed and prescriptive. You have no intuition yet, so these hold your hand
@@ -39,6 +62,7 @@ Tick these off as you go. Honest ticks only — "it compiles" is not "it works."
 **Part 1 — Foundations**
 - [ ] 01 — Toolchain builds an empty raylib program on macOS
 - [ ] 01 — ...and on Windows
+- [ ] 01a — All eight C++ refresher exercises run and explained
 - [ ] 02 — Window opens, background color cycles over time
 - [ ] 03 — A shape I can move with the keyboard
 - [ ] 04 — Movement speed is identical at 30, 60 and 144 FPS
@@ -65,5 +89,12 @@ Getting stuck is the job. But there is a difference between *productive* stuck
 (you don't understand the concept) and *unproductive* stuck (a build flag is
 wrong). Chapter 01 has an error-triage table specifically so build-plumbing
 problems cost you minutes instead of evenings.
+
+A third kind is worth naming: **stuck because C++ did something you didn't expect**
+— a change that didn't stick, a value that was garbage, a crash with a useless
+stack trace. That is almost always one of value semantics, a dangling
+reference/iterator, or uninitialised memory. All three are in the refresher, and
+all three are things sanitizers find in seconds. Reach for
+`-fsanitize=address,undefined` earlier than feels necessary.
 
 Next: [01 — Toolchain and Build](01-toolchain-and-build.md)

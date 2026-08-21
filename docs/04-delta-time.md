@@ -7,6 +7,23 @@ will bite you when you copy the project across. Your Mac runs at 60 or 120 Hz. Y
 gaming PC runs at 144 Hz or higher. **The same code will play at different speeds on
 each machine** until you fix this — and it will feel like the port is broken.
 
+## C++ you'll meet here
+
+- **`constexpr`** for `FIXED_DT`, `MAX_DELTA` and speeds. Compile-time constants,
+  typed, no macro downsides.
+- **`std::min` / `std::max`** (`<algorithm>`) — clamping delta. On Windows these are
+  the functions that `windows.h`'s `min`/`max` *macros* break, which is why chapter 14
+  tells you to `#define NOMINMAX`.
+- **Float precision** — `float` gives ~7 significant digits. Accumulating `dt` into a
+  running total for minutes on end drifts. Relevant to chapter 07's accumulator; use
+  `double` if you're summing elapsed time over a long session.
+- **Integer vs float division** — `1 / 60` is `0`, `1.0f / 60.0f` is `0.0167f`. This
+  one bites everyone at least once.
+- **Units in names** — not a language feature, but the discipline that prevents this
+  chapter's entire bug class: `speedPixelsPerSecond` rather than `speed`.
+
+Fuzzy? [01a — C++ Refresher](01a-cpp-refresher.md) section 4.
+
 ## The bug
 
 In chapter 03 you wrote something like `position.x += speed` where speed is "5".
@@ -75,6 +92,25 @@ Two standard mitigations:
 Do the clamp now. **Fixed timestep is chapter 07** — it changes the architecture of
 your loop, so it deserves its own chapter and a reason to exist. Note the debt here
 and move on.
+
+## Exercises
+
+1. **Measure the bug before fixing it.** With per-frame movement, use `SetTargetFPS`
+   to time how long the shape takes to cross the window at 30, then 60, then 144.
+   Write the three numbers down. Fix it, repeat, confirm they match.
+2. **Integer division.** Print `1 / 60`, `1 / 60.0f`, and `(float)(1 / 60)`. Explain
+   the third one — it's the trap, because the cast happens too late.
+3. **Acceleration, both ways.** Implement gravity with `dt` applied to both velocity
+   and position, then deliberately omit it from the velocity line. Compare jump arcs
+   at 30 vs 144 FPS. The second version is subtly wrong in a way that's hard to spot
+   without the comparison.
+4. **Euler ordering.** Bounce a ball and update position *before* velocity, then
+   after. Let each run for a minute. One gains energy, one loses it. Watch it happen.
+5. **Simulate a hitch.** Add a key that, when pressed, sleeps for 500ms. Watch your
+   object teleport through a wall. Then add the delta clamp and watch it not.
+6. **Float drift.** Accumulate `GetFrameTime()` into a `float` and into a `double`
+   side by side, print both to 7 decimals, leave it running for a few minutes. Note
+   when they diverge.
 
 ## Definition of done
 

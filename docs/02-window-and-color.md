@@ -5,6 +5,24 @@ Goal: a window whose background color changes over time, with no input.
 Sounds trivial. It contains the two ideas that every frame of every game you ever
 write is built on.
 
+## C++ you'll meet here
+
+- **Brace initialization** — `Color c{255, 0, 0, 255}`. raylib's structs are plain C
+  structs, so this is how you build one. Braces also *reject* narrowing conversions,
+  which matters immediately for the next item.
+- **`unsigned char`** — each `Color` channel is 0-255. Assigning a `float` or an
+  out-of-range `int` needs a deliberate conversion, not a hope.
+- **`static_cast<T>`** — the conversion you want when mapping `sin()`'s -1.0..1.0
+  onto 0..255. Writing it explicitly forces you to think about the rounding.
+- **`float` vs `double`** — `GetTime()` returns `double`, `<cmath>`'s `sin` prefers
+  `double`, raylib's API is `float`. Mixing them is where `-Wextra`'s
+  narrowing-conversion warnings come from.
+- **`constexpr`** — for compile-time constants like screen width. Prefer it over
+  `#define`: it's typed and scoped, where a macro is neither.
+- **`<cmath>`** — `sin`, `cos`, `fmod`. Note it's `<cmath>`, not `<math.h>`, in C++.
+
+Fuzzy on any of these? [01a — C++ Refresher](01a-cpp-refresher.md) sections 4, 6 and 11.
+
 ## The shape of the program
 
 Four regions, in order:
@@ -101,6 +119,25 @@ excuse.
 - If you get a console window *behind* your game window, that's the default
   subsystem. Leave it for now — it's where your debug prints go, and you'll want
   them. Chapter 16 deals with hiding it.
+
+## Exercises
+
+1. **Channel by channel.** Write a function taking three `float`s in 0.0-1.0 and
+   returning a raylib `Color`. Decide what it does with out-of-range input, and make
+   that decision explicit rather than accidental.
+2. **The mapping problem.** `sin()` gives -1.0 to 1.0; you need 0 to 255. Write the
+   conversion, then check the endpoints: what does your code produce at exactly -1.0
+   and exactly 1.0? Off-by-one at 256 wraps to 0 and shows as a colour glitch at the
+   peak of the cycle.
+3. **Phase-shifted channels.** Drive R, G and B from the same `GetTime()` but offset
+   each by a different phase. Compare against cycling hue via `ColorFromHSV`. Write
+   down why one looks muddy.
+4. **Deliberate breakage.** Comment out `ClearBackground` and draw a moving shape.
+   Watch the smearing. This is the one exercise in the roadmap whose whole purpose is
+   to see something look wrong.
+5. **Constants.** Replace every magic number (width, height, target FPS, cycle speed)
+   with a named `constexpr`. Then try `#define` for one of them and articulate what
+   you lost.
 
 ## Definition of done
 

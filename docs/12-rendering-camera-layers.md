@@ -4,6 +4,28 @@
 is whatever order your code happens to run in, and the world is exactly the size of
 the window. You cannot scroll, zoom, or reliably put the UI on top.
 
+## C++ you'll meet here
+
+- **Lambdas** — `[](const Sprite& a, const Sprite& b) { return a.layer < b.layer; }`.
+  This is where they finally have an obvious use. Understand the capture list:
+  `[]` captures nothing, `[&]` by reference, `[=]` by copy, `[this]` the enclosing
+  object. Capturing by reference and outliving the referent is a real bug.
+- **`std::sort`** (`<algorithm>`) — and the requirement that your comparator be a
+  *strict weak ordering*. A comparator using `<=` instead of `<` is undefined
+  behaviour and really does crash in release builds. Non-obvious and worth knowing.
+- **`std::stable_sort`** — preserves relative order of equal elements. For draw
+  ordering this is often what you actually want, since it keeps insertion order within
+  a layer.
+- **`std::function`** (`<functional>`) — type-erased callable. Convenient, but it can
+  heap-allocate and it prevents inlining. Fine for a handful of draw commands, wrong
+  for a per-entity per-frame hot path. Knowing *when it costs* is the lesson.
+- **Sorting by multiple keys** — `std::tie(layer, y)` (`<tuple>`) gives you
+  lexicographic comparison in one line.
+- **A draw-command struct** — separating "decide to draw" from "draw" means a
+  `std::vector<DrawCmd>` you sort then flush. Plain data, easy to reason about.
+
+Fuzzy? [01a — C++ Refresher](01a-cpp-refresher.md) sections 6 and 9.
+
 ## Camera: world space vs screen space
 
 `Camera2D` is a struct with `target` (the world point to centre on), `offset` (where
@@ -65,6 +87,26 @@ Options, cheapest first:
   scope here — but this is the most rewarding optional detour on the list.
 - **Resolution independence.** Design for a virtual resolution and scale to the
   window, or your game breaks on your PC's monitor. Handle `IsWindowResized`.
+
+## Exercises
+
+1. **Capture semantics.** Write a lambda capturing a local by reference, return it
+   from the function, then call it. Run under ASan. That's a dangling capture, and it
+   looks completely innocent.
+2. **Break `std::sort`.** Write a comparator using `<=` instead of `<`, sort a few
+   thousand elements in a Release build. It may crash, it may silently corrupt. Then
+   read why "strict weak ordering" is a requirement rather than a suggestion.
+3. **Sort by two keys.** Order sprites by layer then y, first with a hand-written
+   nested comparison, then with `std::tie`. Compare readability.
+4. **Stable vs not.** Give several sprites the same layer, sort with both `sort` and
+   `stable_sort`, and observe the flicker difference across frames when order isn't
+   preserved. This is a real bug that looks like a rendering glitch.
+5. **`std::function` cost.** Store 10,000 draw operations as `std::function` and as a
+   plain struct with a switch. Time both in Release. Now you have a number instead of
+   an opinion.
+6. **World vs screen.** Click to spawn something at the mouse position while the
+   camera is scrolled and zoomed. Get it right with `GetScreenToWorld2D`. Then get it
+   deliberately wrong to see what the bug looks like.
 
 ## Definition of done
 

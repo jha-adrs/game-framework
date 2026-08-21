@@ -3,6 +3,26 @@
 Goal: a shape you move with the keyboard. The real goal: understanding where state
 lives.
 
+## C++ you'll meet here
+
+- **Pass by reference** — `void applyInput(Vector2& pos)` mutates the caller's value;
+  `Vector2 pos` mutates a copy and silently does nothing. This is the chapter where
+  that distinction stops being theory.
+- **Returning structs by value** — `Vector2 readInput()` is the cleaner shape, and
+  the copy is free in practice. Prefer it over an out-parameter.
+- **`std::clamp`** (`<algorithm>`, C++17) — for keeping the shape on screen. Note the
+  argument order and that it returns rather than mutates.
+- **Operator overloading** — `raymath.h` gives you `Vector2Add(a, b)`. Writing your
+  own `operator+` for `Vector2` so you can say `a + b` is a good first taste, and it
+  shows you what raymath chose *not* to do (raylib is C; C has no operator overloading).
+- **`const` on parameters** — `float length(const Vector2& v)` says "I read this, I
+  don't copy it, I don't change it."
+- **Division by zero in floats** — normalising a zero-length vector gives you `inf`
+  or `NaN` rather than a crash, and `NaN` propagates silently through every later
+  calculation. This is a genuinely nasty failure mode.
+
+Fuzzy? [01a — C++ Refresher](01a-cpp-refresher.md) sections 1, 2, 3 and 7.
+
 ## The core exercise
 
 Draw a rectangle or circle. Move it with the arrow keys or WASD. That's it.
@@ -74,6 +94,24 @@ Say it out loud each time until it sticks.
 - Print the position with `DrawText` and `TextFormat` (raylib's `sprintf`-alike).
   A permanent on-screen readout of your state is the cheapest debugging tool you
   will ever build, and chapter 13 turns it into a real overlay.
+
+## Exercises
+
+1. **Prove the copy bug.** Write your movement function taking `Vector2` by value
+   first. Watch the shape not move. Then add one character. You will make this
+   mistake for real later; make it cheaply now.
+2. **Normalise by hand.** Write `Vector2Normalize` yourself before using raymath's.
+   Then feed it `{0, 0}` and print the result. Is it `nan`? Now decide what your code
+   *should* do with no input held, and make it do that.
+3. **NaN propagation.** Take that `nan` position and add to it, multiply it, clamp it.
+   Print at each step. Notice `nan` survives everything and that comparisons against
+   it are all false — including `nan == nan`.
+4. **Operator overloading.** Add `operator+`, `operator-` and `operator*` (by scalar)
+   for `Vector2`. Rewrite your movement using them. Decide whether it reads better;
+   there's a real argument either way.
+5. **Corner vs centre.** Put a rectangle and a circle on screen and clamp both inside
+   the window. The rectangle's x/y is its corner, the circle's is its centre. Getting
+   both right is a five-minute exercise that prevents a recurring class of bug.
 
 ## Definition of done
 

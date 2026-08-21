@@ -7,6 +7,27 @@ input, or write a test that simulates a press.
 
 **The fix:** gameplay code asks about *actions*, never keys.
 
+## C++ you'll meet here
+
+- **`enum class` with an explicit underlying type** — `enum class Action : int { ... }`,
+  plus a trailing `Count` member. `Count` is the idiom that lets an array size itself
+  to the enum.
+- **`static_cast<size_t>(action)`** — `enum class` deliberately won't convert
+  implicitly, so indexing an array by it requires saying so. That friction is the
+  type safety working.
+- **`std::array<T, N>`** (`<array>`) — fixed-size, knows its own size, doesn't decay
+  to a pointer. The right backing store for action state, not `std::map`.
+- **Why not `std::unordered_map<std::string, ...>`** — hashing a string every frame,
+  cache-hostile, and turns a typo into a silent runtime miss instead of a compile
+  error. Worth understanding as a *rejected* option.
+- **A snapshot struct** — `struct InputState { std::array<bool, Count> down; ... }`.
+  Two of them (current and previous) is how `wasPressed` works.
+- **`constexpr` lookup tables** — the action-to-key binding table can be built at
+  compile time.
+- **`std::bitset`** — a compact alternative to `array<bool>` if you want to see it.
+
+Fuzzy? [01a — C++ Refresher](01a-cpp-refresher.md) sections 9, 10 and 11.
+
 ## The shape
 
 Gameplay asks `input.isDown(Action::MoveLeft)`. A lookup table maps actions to
@@ -40,6 +61,22 @@ That means input recording, replays, demo playback, deterministic bug reproducti
 and — combined with chapter 07's fixed timestep — the ability to actually unit-test
 gameplay without a window. Chapter 15 cashes that in. This is the real reason to
 build the indirection, not rebinding.
+
+## Exercises
+
+1. **The `Count` idiom.** Define `enum class Action` ending in `Count`, then declare
+   `std::array<bool, static_cast<size_t>(Action::Count)>`. Add a new action and
+   confirm the array resizes with zero other edits. That's the whole trick.
+2. **`wasPressed` from two snapshots.** Implement it by comparing current against
+   previous. Then test the hard case: a key pressed and released within a single
+   frame. Decide what should happen and whether your code does it.
+3. **Purge the direct calls.** Grep for `IsKeyDown` outside your input layer. Get to
+   zero. If something resists, that's a design finding worth writing down.
+4. **Two bindings, one action.** Map `MoveLeft` to A, Left-arrow, and the gamepad
+   stick simultaneously. Note where analog complicates a `bool` interface.
+5. **Fake input.** Feed a hand-built `InputState` into your update function with no
+   window open at all. If that works, you've unlocked chapter 15's testing — verify it
+   by writing one assertion about movement without ever calling `InitWindow`.
 
 ## Definition of done
 

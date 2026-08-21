@@ -7,6 +7,26 @@ Your Mac and your 144 Hz PC will not agree.
 
 **The fix:** decouple simulation rate from render rate.
 
+## C++ you'll meet here
+
+- **`constexpr`** — `FIXED_DT`, `MAX_STEPS`. Fixed by definition; say so in the type
+  system.
+- **Function decomposition** — `update(float dt)` and `render()` as real functions
+  with real signatures. What you pass to each tells you a lot about whether your
+  state is well-organised.
+- **State by reference vs member** — as the loop splits, "where does the game state
+  live?" becomes unavoidable. A `GameState` struct passed by reference is the simplest
+  honest answer; globals are the tempting wrong one.
+- **`const` on `render`** — if rendering takes state as `const&`, the compiler
+  enforces that drawing can't mutate simulation. That's a genuinely valuable
+  invariant, cheaply obtained.
+- **`double` for accumulated time** — see chapter 04's precision note. The
+  accumulator itself is fine as `float`; a total-elapsed-seconds counter isn't.
+- **`std::chrono`** — worth *knowing* exists (`steady_clock`, `duration`) even though
+  `GetFrameTime()` covers you here. It's the standard answer outside raylib.
+
+Fuzzy? [01a — C++ Refresher](01a-cpp-refresher.md) sections 2, 3 and 8.
+
 ## The idea
 
 Physics runs at a **fixed** step — say exactly 1/60s — no matter how fast you
@@ -54,6 +74,23 @@ discipline) prevents a large class of confusing bugs.
 - Glenn Fiedler, *Fix Your Timestep!* — the canonical article. Short, read it twice.
 - Robert Nystrom, *Game Programming Patterns*, "Game Loop" chapter. Free online.
   Also read "Update Method" while you're there.
+
+## Exercises
+
+1. **Accumulator by hand.** Before wiring it into the game, write a console program:
+   feed a hardcoded array of frame times (including one 0.8s spike) into the
+   accumulator loop and print how many fixed steps each frame produces. Assert the
+   totals. This is the exact test chapter 15 will reuse.
+2. **Remove the cap.** Omit `MAX_STEPS`, feed in a 5-second frame, and watch the
+   while loop run 300 iterations. That's the spiral of death in miniature.
+3. **The split.** Separate `update(dt)` from `render()`. Make `render` take state as
+   `const&`. Then try to mutate something inside `render` and read the compile error —
+   that error is the invariant working.
+4. **See the stutter.** Set your fixed rate to 10 Hz while rendering at 60. The
+   choppiness is what interpolation fixes. Only *then* decide whether to implement it.
+5. **Input timing.** Poll input once per frame, then once per fixed step. Tap a
+   single-frame action in both. Describe the difference in behaviour, then pick one
+   and write down why.
 
 ## Definition of done
 

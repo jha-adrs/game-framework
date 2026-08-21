@@ -1,5 +1,30 @@
 # 15 — Testing and Profiling
 
+## C++ you'll meet here
+
+- **`assert`** (`<cassert>`) — runtime check, **compiled out when `NDEBUG` is
+  defined**, which Release builds do by default. So never put side effects inside an
+  assert; the expression simply vanishes. A classic bug.
+- **`static_assert`** — compile-time, never compiled out. Free, use it liberally for
+  invariants about sizes and types.
+- **Pure functions** — no hidden state, no I/O, same input gives same output. These
+  are the *only* things that are pleasant to test, which is why chapter 07's
+  `update`/`render` split and chapter 09's input snapshot were prerequisites.
+- **`const` correctness as testability** — a function taking `const&` and returning a
+  value can be called from a test with no setup at all.
+- **`[[nodiscard]]`** — makes ignoring a return value a warning. Good on anything
+  whose result is the entire point.
+- **Undefined behaviour** — the category that makes C++ debugging hard. Signed
+  overflow, out-of-bounds reads, use-after-free, uninitialised reads. UB doesn't mean
+  "crashes"; it means the compiler may assume it never happens and optimise
+  accordingly. This is why it "works in Debug, breaks in Release."
+- **Sanitizers** — `-fsanitize=address,undefined`. Higher bug-per-effort than unit
+  tests, for C++ specifically.
+- **A library target in CMake** — `add_library(gamelib ...)` linked by both the game
+  and the test binary. The refactor is the valuable part; it forces a real boundary.
+
+Fuzzy? [01a — C++ Refresher](01a-cpp-refresher.md) sections 3 and 8.
+
 ## Testing: how do you even test a game?
 
 The honest answer: **you don't test the game, you test the parts that aren't the
@@ -98,6 +123,28 @@ wrong, and this is universal, not a beginner thing.
 - **Spatial partitioning** (grid, quadtree) is the standard fix for the O(n²)
   collision case — but only once you've measured that collision is the bottleneck.
   A uniform grid is much simpler than a quadtree and usually enough.
+
+## Exercises
+
+1. **`assert` disappears.** Write `assert(doSomethingImportant());` where the function
+   has a side effect. Run in Debug — works. Run in Release — silently doesn't. This is
+   why side effects never go inside an assert.
+2. **The library split.** Move collision, vector math and the accumulator into
+   `gamelib`. Link both `game` and `tests` against it. This refactor is most of the
+   chapter's value.
+3. **Test the accumulator.** Feed known frame-time sequences, assert exact step
+   counts. Include the spike case and the cap. Chapter 07 exercise 1 was the prototype.
+4. **Test collision edges.** Exactly-touching rectangles, zero-size rectangles,
+   negative dimensions, fully-contained. Decide the correct answer for each *before*
+   asserting it — several are genuinely judgement calls.
+5. **Gameplay with no window.** Using chapter 09's synthetic input, assert that
+   holding MoveRight for exactly 60 fixed steps moves the player a specific distance.
+   No `InitWindow` anywhere. If this works, your architecture is sound.
+6. **Sanitizers on the real thing.** Build with `-fsanitize=address,undefined` and
+   play for five minutes. Fix everything it finds. You will find something.
+7. **Profile.** Release build, Instruments or the VS profiler. Find your worst frame.
+   Optimise exactly one thing based on the measurement, then re-measure to confirm it
+   helped. If it didn't, revert it.
 
 ## Definition of done
 

@@ -8,6 +8,32 @@ fat struct with unused fields. Spawning and despawning mid-iteration causes bugs
 because they read an article, and then never ship. Read the escalation ladder below
 and stop at the lowest rung that solves your actual problem.
 
+## C++ you'll meet here
+
+- **`std::vector` internals** — `size()` vs `capacity()`, geometric growth, and
+  `reserve()`. Knowing the difference is what makes the invalidation rules make sense
+  rather than seem arbitrary.
+- **Iterator / pointer / reference invalidation** — `push_back` past capacity
+  invalidates *everything* pointing into the vector. `erase` invalidates from the
+  erased position onward. Short list, worth memorising exactly.
+- **`std::erase_if`** (C++20) / **erase-remove idiom** (`std::remove_if` + `erase`,
+  C++17). Know which standard you're on — chapter 01 set `CMAKE_CXX_STANDARD 17`, so
+  `erase_if` is unavailable unless you bump it. That's a real decision to make here.
+- **Swap-and-pop** — O(1) removal that reorders. Fine when order doesn't matter, and
+  it usually doesn't.
+- **`size_t` vs `int`** — `.size()` is unsigned. Mixing signs in a loop condition is
+  `-Wsign-compare`, and reverse loops with `size_t` underflow catastrophically at zero.
+- **`std::optional<T>`** (`<optional>`, C++17) — "maybe an entity," without a
+  sentinel index or a null pointer.
+- **Generational handles** — `struct Handle { uint32_t index; uint32_t generation; };`
+  Plain data, no language feature needed, kills a whole bug class.
+- **Templates, first real contact** — if you write a `SlotMap<T>`, you're writing a
+  template. Keep it in one header, keep it small.
+- **`std::span`** (C++20) — a non-owning view over contiguous data. Note it exists;
+  it's the clean way to pass "a range of entities" once you're on C++20.
+
+Fuzzy? [01a — C++ Refresher](01a-cpp-refresher.md) section 9, and exercise 5 there.
+
 ## The escalation ladder
 
 **Rung 1 — `std::vector<Thing>`.** One vector per kind. Contiguous, cache-friendly,
@@ -66,6 +92,27 @@ rather than a fashion.
 
 - *Game Programming Patterns* — "Component", "Object Pool", "Data Locality".
   The data locality chapter is the clearest explanation of why rung 3 exists.
+
+## Exercises
+
+1. **Watch reallocation.** Print `size()` and `capacity()` after each of 20
+   `push_back`s. Note the growth pattern. Then `reserve(20)` up front and print again.
+2. **Invalidation, caught.** Hold a pointer to `v[0]`, push past capacity, read
+   through the pointer. Run under ASan. Read the report carefully — it names both the
+   bad access and the old allocation.
+3. **The reuse bug.** Store a bare index as an entity reference. Kill that entity,
+   spawn a new one into the same slot, then use the stale index. Watch the bullet
+   damage the wrong enemy. Then implement `{index, generation}` and watch it become
+   impossible.
+4. **Removal, measured.** Implement swap-and-pop and mark-and-sweep over 10,000
+   entities. Time both in a Release build. Then check whether the difference matters
+   at *your* actual entity count — the honest answer is usually no, and knowing that
+   is the point.
+5. **`size_t` underflow.** Write a reverse loop with `for (size_t i = v.size() - 1; i >= 0; --i)`
+   over an empty vector. Predict what happens, then run it. Fix it two ways.
+6. **Struct-of-arrays, benchmarked.** Convert one hot loop to parallel arrays.
+   Measure. If it's not faster at your entity count, revert it and write down what
+   you learned. A reverted optimisation you *measured* is a success.
 
 ## Definition of done
 

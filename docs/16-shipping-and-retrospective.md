@@ -1,5 +1,25 @@
 # 16 — Shipping and Retrospective
 
+## C++ you'll meet here
+
+Little new language material — this chapter is mostly toolchain and judgement. Two
+things worth knowing:
+
+- **`NDEBUG`** — defined automatically in Release. It removes every `assert`, which
+  means a Release build genuinely executes different code from the Debug build you
+  tested. Test the Release build before shipping it, not just Debug.
+- **`WIN32_EXECUTABLE`** — flipping it changes your entry point from `main` to
+  `WinMain`, which is a linker-level change. Keep it off for Debug so you keep a
+  console for output.
+
+The retrospective is the real content here. Two questions to add to it, now that
+you've been writing C++ for a while:
+
+- **Which C++ features did I use because they fit, and which because I'd just learned
+  them?** Template and inheritance regret is common and worth naming.
+- **Where am I still guessing?** Whatever's on that list is your next reading, and
+  it's a better-informed list than any curriculum could have given you upfront.
+
 ## Part A — Get it onto someone else's machine
 
 A build a stranger can double-click is a different artifact from one that runs on
@@ -97,6 +117,22 @@ Pick based on question 5:
   optimisation, SIMD. Read about data-oriented design.
 - **Loved tools** → level editors, hot reloading, asset pipelines. Underrated,
   genuinely valuable, and few hobbyists go here.
+
+## Exercises
+
+1. **Ship the Windows zip.** `game.exe` plus `assets/`, console hidden in Release.
+   Have someone who is not you download and run it.
+2. **Ship the macOS zip.** With the right-click-to-open note. Confirm your asset
+   paths survive being inside a `.app` bundle — chapter 14's path work is what makes
+   this pass or fail.
+3. **Test the Release build properly.** Play through your whole game in Release, not
+   Debug. Asserts are gone; anything you were relying on them for is now silent.
+4. **Optional: CI.** A GitHub Actions matrix over `macos-latest` and
+   `windows-latest`. The real value is catching cross-platform breakage without
+   switching machines.
+5. **The retrospective.** All five questions in Part B, plus the two C++ questions
+   above, written down and committed. This is the actual final exercise of the
+   roadmap.
 
 ## Definition of done
 
