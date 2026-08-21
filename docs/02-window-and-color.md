@@ -99,6 +99,24 @@ Getting one window open is not the exercise. Do all four:
    passes through grey; HSV cycling looks like a rainbow. That difference is a real
    graphics insight about color spaces, not trivia.
 
+Here is what the two actually look like, and the measurable difference between them:
+
+![Three sine waves in RGB compared against a hue sweep in HSV, with a plot of each one's saturation](images/rgb-vs-hsv.svg)
+
+Both produce a smooth, evenly-paced rainbow that wraps seamlessly — the sine version's
+hue advances within 3% of perfectly uniform, so it is a genuinely good approximation.
+The difference is **saturation**: HSV holds it flat at 1.0 by construction, while the
+sine version scallops between 0.75 and 1.0, dipping at each of the three points per
+cycle where two waves cross. Those dips are where the colour goes slightly chalky, and
+the sine version never reaches a pure primary — there is always some of all three
+channels present.
+
+So the case for HSV is not mainly that it looks better. It is that hue, vividness and
+brightness become **independent knobs**: "same rainbow but dimmer" is one number in
+HSV, and a re-derivation of all three waves in RGB. That idea generalises well past
+colour — pick the coordinate system in which your problem's variables stop interfering
+with each other.
+
 Step 3 is the first time you write **`state = f(time)` inside a loop that redraws
 everything.** That pattern is every game you will ever write. The colors are an
 excuse.
@@ -141,10 +159,10 @@ excuse.
 
 ## Definition of done
 
-- [ ] Window opens on macOS
-- [ ] Window opens on Windows
-- [ ] Background is a color I built from raw RGBA numbers
-- [ ] Background cycles over time using `GetTime()`
+- [x] Window opens on macOS
+- [x] Window opens on Windows
+- [x] Background is a color I built from raw RGBA numbers
+- [x] Background cycles over time using `GetTime()`
 - [ ] I tried the HSV version and can explain why it looks better
 - [ ] I deliberately removed `ClearBackground` and saw the smearing
 

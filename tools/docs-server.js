@@ -11,9 +11,15 @@ const ROOT = path.resolve(__dirname, '..');
 const DOCS = path.join(ROOT, 'docs');
 const SHELL = path.join(__dirname, 'docs-shell.html');
 const VENDOR = path.join(__dirname, 'vendor', 'marked.min.js');
+const IMAGES = path.join(DOCS, 'images');
 const PORT = Number(process.argv[2] || process.env.PORT || 4321);
 
 const SAFE_DOC = /^[A-Za-z0-9._-]+\.md$/;
+const SAFE_IMG = /^[A-Za-z0-9._-]+\.(svg|png|jpg|jpeg|gif|webp)$/i;
+const IMG_TYPES = {
+  svg: 'image/svg+xml', png: 'image/png', jpg: 'image/jpeg',
+  jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp',
+};
 
 // Fallback only — the doc's own H1 is the canonical title.
 function titleFromFilename(name) {
@@ -61,6 +67,16 @@ const server = http.createServer(async (req, res) => {
     if (p === '/vendor/marked.min.js') {
       const body = await fsp.readFile(VENDOR);
       return send(res, 200, 'application/javascript; charset=utf-8', body);
+    }
+
+    if (p.startsWith('/images/')) {
+      const name = p.slice('/images/'.length);
+      if (!SAFE_IMG.test(name)) return send(res, 400, 'text/plain', 'Bad request');
+      const full = path.join(IMAGES, name);
+      if (path.dirname(full) !== IMAGES) return send(res, 400, 'text/plain', 'Bad request');
+      const ext = name.split('.').pop().toLowerCase();
+      const body = await fsp.readFile(full);
+      return send(res, 200, IMG_TYPES[ext], body);
     }
 
     if (p.startsWith('/docs/')) {
