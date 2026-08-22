@@ -175,5 +175,6 @@ places loads it three times.
 - [ ] Missing files fail in a way I chose deliberately
 - [ ] No graphics resource outlives `CloseWindow()` — and I know why that matters
 - [ ] I verified no leaks (macOS: `leaks`; Windows: VS diagnostic tools)
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 Next: [11 — Entities and Data Layout](11-entities-and-data.md)

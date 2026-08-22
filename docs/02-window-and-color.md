@@ -165,5 +165,6 @@ excuse.
 - [x] Background cycles over time using `GetTime()`
 - [ ] I tried the HSV version and can explain why it looks better
 - [ ] I deliberately removed `ClearBackground` and saw the smearing
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 Next: [03 — Input, State and Motion](03-input-state-motion.md)

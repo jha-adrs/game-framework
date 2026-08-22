@@ -121,5 +121,6 @@ Say it out loud each time until it sticks.
 - [ ] The shape can't leave the window
 - [ ] Position is displayed on screen
 - [ ] I know what my normalise does when no keys are held
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 Next: [04 — Delta Time](04-delta-time.md)

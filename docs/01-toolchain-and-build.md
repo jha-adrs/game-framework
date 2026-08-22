@@ -220,5 +220,6 @@ you *recognise* rather than something you look up.
 - [x] Empty program compiles and links on macOS
 - [x] Same commit compiles and links on Windows
 - [x] You can state, without looking, the difference between a compile error and a link error
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 Next: [01a — C++ Refresher](01a-cpp-refresher.md)

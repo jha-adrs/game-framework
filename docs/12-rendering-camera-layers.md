@@ -116,5 +116,6 @@ Options, cheapest first:
 - [ ] I can convert a mouse click into a world position
 - [ ] Draw order is deliberate, not accidental
 - [ ] I know what `RenderTexture2D` is for, even if unused
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 Next: [13 — Audio, UI and Debug Tools](13-audio-ui-debug.md)

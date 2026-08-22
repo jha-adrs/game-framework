@@ -154,5 +154,6 @@ wrong, and this is universal, not a beginner thing.
 - [ ] I have run the game under ASan/UBSan and fixed what it found
 - [ ] I have profiled a Release build and know my actual worst frame
 - [ ] I optimised one thing based on measurement, not a guess
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 Next: [16 — Shipping and Retrospective](16-shipping-and-retrospective.md)

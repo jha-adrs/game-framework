@@ -82,6 +82,7 @@ let DOCS = [];
 
 function partHeading(file) {
   const n = parseInt(file, 10);
+  if (Number.isNaN(n)) return 'Reference';
   if (n === 0) return 'Overview';
   if (n <= 5) return 'Part 1 — Foundations';
   if (n <= 13) return 'Part 2 — Toward a framework';

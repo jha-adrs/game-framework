@@ -121,5 +121,6 @@ rather than a fashion.
 - [ ] One entity can safely refer to another (handles, if needed)
 - [ ] I can state which rung I'm on and what would push me up one
 - [ ] I did **not** write an ECS unless I can name the problem it solved
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 Next: [12 — Rendering, Camera, Layers](12-rendering-camera-layers.md)

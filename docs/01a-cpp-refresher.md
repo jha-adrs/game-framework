@@ -292,5 +292,6 @@ output before running, then check.
 - [ ] I have seen ASan catch a real bug
 - [ ] I understand why a definition in a header can break the link
 - [ ] `-Wall -Wextra` is on by default in my CMakeLists
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 Next: [02 — Window and Color](02-window-and-color.md)

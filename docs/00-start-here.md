@@ -28,6 +28,12 @@ Every chapter from 02 on has two extra sections:
   The ones that say "run this under ASan" are the highest-value ones on the
   roadmap; don't skip them because the code "looks fine."
 
+After finishing a chapter and before ticking its boxes, run
+[the code review rubric](CODE-REVIEW.md). Self-review first, then ask for a review —
+you write every fix. The rubric's second half tracks the bugs this project has
+actually hit, grouped by what they have in common, and that section is worth
+re-reading before you start a chapter rather than after.
+
 The C++ is spread across the chapters on purpose. Learning move semantics in the
 abstract is miserable; learning it because a copied `Texture2D` just double-freed
 a GPU handle takes about ten minutes and sticks permanently.

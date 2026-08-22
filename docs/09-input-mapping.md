@@ -86,5 +86,6 @@ build the indirection, not rebinding.
 - [ ] At least one action has two different physical bindings
 - [ ] Gamepad works, or I've written down how it would plug in
 - [ ] I could feed fake input in without touching gameplay code
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 Next: [10 — Resources and RAII](10-resources-and-raii.md)

@@ -108,5 +108,6 @@ this actually annoy me in chapter 05" and work top-down.
 - [ ] I wrote down actual answers to the four questions
 - [ ] I have a list of Part 2 chapters ordered by my own pain, not the numbering
 - [ ] I've considered writing a second small game before abstracting anything
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 Next: [07 — Loop Architecture](07-loop-architecture.md)

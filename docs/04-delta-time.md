@@ -120,5 +120,6 @@ and move on.
 - [ ] Delta is clamped to a sane maximum
 - [ ] I can explain why acceleration needs `dt` twice
 - [ ] I know what tunnelling is and why chapter 07 exists
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 Next: [05 — Collision and Your First Real Game](05-collision-first-game.md)

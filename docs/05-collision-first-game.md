@@ -137,6 +137,7 @@ Everything above is the easy part. These are the things you have never done:
 - [ ] It has at least one piece of juice (flash, shake, or sound)
 - [ ] It runs on macOS and Windows from the same commit
 - [ ] **A real person other than me has played it**
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 Stop here for a while. Play it. Notice what annoyed you to write.
 That annoyance is the input to Part 2.

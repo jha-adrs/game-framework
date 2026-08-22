@@ -153,5 +153,6 @@ much harder to unpick than a day of it.
 - [ ] Release builds on both platforms
 - [ ] `build.sh` and `build.bat` wrap the per-platform incantations
 - [ ] I pull and build on the other machine at least weekly
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 Next: [15 — Testing and Profiling](15-testing-and-profiling.md)

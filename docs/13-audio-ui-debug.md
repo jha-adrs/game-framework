@@ -116,5 +116,6 @@ guess.
 - [ ] **F1 debug overlay**
 - [ ] **Collision shapes can be visualised**
 - [ ] **I can pause and single-step the simulation**
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 Next: [14 — Cross-Platform Reality](14-cross-platform-windows.md)

@@ -142,6 +142,7 @@ Pick based on question 5:
 - [ ] I know what my engine actually is, as a file list
 - [ ] I deleted at least one abstraction I didn't need
 - [ ] I know what I want to do next, and it's based on what was fun
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 ---
 

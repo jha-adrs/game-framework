@@ -99,5 +99,6 @@ for free. It's the reason to prefer a stack from the start.
 - [ ] A pause scene renders the game underneath without updating it
 - [ ] Adding a new screen doesn't require touching a giant switch
 - [ ] I wrote down what data is shared vs per-scene
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 Next: [09 — Input Mapping](09-input-mapping.md)

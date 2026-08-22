@@ -100,5 +100,6 @@ discipline) prevents a large class of confusing bugs.
 - [ ] Behaviour is identical on my Mac and my PC despite different refresh rates
 - [ ] I wrote down where input polling lives and why
 - [ ] I understand what interpolation fixes, even if I haven't added it
+- [ ] Reviewed against [the code review rubric](CODE-REVIEW.md) — tier 1 and 2 clear
 
 Next: [08 — Scenes and Lifecycle](08-scenes-and-lifecycle.md)
