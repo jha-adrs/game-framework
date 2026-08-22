@@ -60,10 +60,10 @@ Checklists and pointers. Cross-platform reality, testing, profiling, shipping.
 Tick these off as you go. Honest ticks only — "it compiles" is not "it works."
 
 **Part 1 — Foundations**
-- [ ] 01 — Toolchain builds an empty raylib program on macOS
+- [x] 01 — Toolchain builds an empty raylib program on macOS
 - [ ] 01 — ...and on Windows
-- [ ] 01a — All eight C++ refresher exercises run and explained
-- [ ] 02 — Window opens, background color cycles over time
+- [x] 01a — All eight C++ refresher exercises run and explained
+- [x] 02 — Window opens, background color cycles over time
 - [ ] 03 — A shape I can move with the keyboard
 - [ ] 04 — Movement speed is identical at 30, 60 and 144 FPS
 - [ ] 05 — One complete tiny game with a win/lose state

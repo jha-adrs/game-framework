@@ -14,10 +14,15 @@ set(BUILD_GAMES OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(
     raylib
     GIT_REPOSITORY https://github.com/raysan5/raylib.git
-    GIT_TAB 5.5
+    GIT_TAG 5.5
     GIT_SHALLOW TRUE
 )
 
 FetchContent_MakeAvailable(raylib)
 add_executable(game src/main.cpp)
+if(MSVC)
+  target_compile_options(game PRIVATE /W4)
+else()
+  target_compile_options(game PRIVATE -Wall -Wextra)
+endif()
 target_link_libraries(game PRIVATE raylib)

@@ -214,11 +214,11 @@ you *recognise* rather than something you look up.
 
 ## Definition of done
 
-- [ ] `brew install cmake` on macOS
-- [ ] Visual Studio 2022 + "Desktop development with C++" on Windows
-- [ ] `CMakeLists.txt` written and understood line by line
-- [ ] Empty program compiles and links on macOS
-- [ ] Same commit compiles and links on Windows
-- [ ] You can state, without looking, the difference between a compile error and a link error
+- [x] `brew install cmake` on macOS
+- [x] Visual Studio 2022 + "Desktop development with C++" on Windows
+- [x] `CMakeLists.txt` written and understood line by line
+- [x] Empty program compiles and links on macOS
+- [x] Same commit compiles and links on Windows
+- [x] You can state, without looking, the difference between a compile error and a link error
 
 Next: [01a — C++ Refresher](01a-cpp-refresher.md)
