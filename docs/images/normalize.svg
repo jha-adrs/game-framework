@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 250" width="100%" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif">
+<text x="0" y="16" font-size="13" font-weight="600" fill="#888">Raw key input &#8212; length varies</text>
+<rect x="32" y="40" width="156" height="156" fill="none" stroke="#e0834f" stroke-width="1.5" stroke-dasharray="4 4"/>
+<line x1="18" y1="118" x2="202" y2="118" stroke="#8883"/>
+<line x1="110" y1="26" x2="110" y2="210" stroke="#8883"/>
+<line x1="110.0" y1="118.0" x2="32.0" y2="40.0" stroke="#e0834f" stroke-width="2.4"/><polygon points="32.0,40.0 38.5,42.6 34.6,46.5" fill="#e0834f"/>
+<line x1="110.0" y1="118.0" x2="110.0" y2="40.0" stroke="#7a7a80" stroke-width="1.8"/><polygon points="110.0,40.0 112.7,46.4 107.3,46.4" fill="#7a7a80"/>
+<line x1="110.0" y1="118.0" x2="188.0" y2="40.0" stroke="#e0834f" stroke-width="2.4"/><polygon points="188.0,40.0 185.4,46.5 181.5,42.6" fill="#e0834f"/>
+<line x1="110.0" y1="118.0" x2="32.0" y2="118.0" stroke="#7a7a80" stroke-width="1.8"/><polygon points="32.0,118.0 38.4,115.3 38.4,120.7" fill="#7a7a80"/>
+<line x1="110.0" y1="118.0" x2="188.0" y2="118.0" stroke="#7a7a80" stroke-width="1.8"/><polygon points="188.0,118.0 181.6,120.7 181.6,115.3" fill="#7a7a80"/>
+<line x1="110.0" y1="118.0" x2="32.0" y2="196.0" stroke="#e0834f" stroke-width="2.4"/><polygon points="32.0,196.0 34.6,189.5 38.5,193.4" fill="#e0834f"/>
+<line x1="110.0" y1="118.0" x2="110.0" y2="196.0" stroke="#7a7a80" stroke-width="1.8"/><polygon points="110.0,196.0 107.3,189.6 112.7,189.6" fill="#7a7a80"/>
+<line x1="110.0" y1="118.0" x2="188.0" y2="196.0" stroke="#e0834f" stroke-width="2.4"/><polygon points="188.0,196.0 181.5,193.4 185.4,189.5" fill="#e0834f"/>
+<circle cx="110" cy="118" r="3" fill="#888"/>
+<text x="0" y="224" font-size="12" fill="#7a7a80">up / down / left / right: length = 1.000</text>
+<text x="0" y="241" font-size="12" fill="#e0834f">the four diagonals: length = 1.414 &#8212; 41% too far</text>
+<text x="280" y="16" font-size="13" font-weight="600" fill="#888">After normalising &#8212; length always 1</text>
+<circle cx="390" cy="118" r="78" fill="none" stroke="#4bb8e8" stroke-width="1.5" stroke-dasharray="4 4"/>
+<line x1="298" y1="118" x2="482" y2="118" stroke="#8883"/>
+<line x1="390" y1="26" x2="390" y2="210" stroke="#8883"/>
+<line x1="390.0" y1="118.0" x2="334.8" y2="62.8" stroke="#4bb8e8" stroke-width="2.4"/><polygon points="334.8,62.8 341.3,65.5 337.5,69.3" fill="#4bb8e8"/>
+<line x1="390.0" y1="118.0" x2="390.0" y2="40.0" stroke="#4bb8e8" stroke-width="1.8"/><polygon points="390.0,40.0 392.7,46.4 387.3,46.4" fill="#4bb8e8"/>
+<line x1="390.0" y1="118.0" x2="445.2" y2="62.8" stroke="#4bb8e8" stroke-width="2.4"/><polygon points="445.2,62.8 442.5,69.3 438.7,65.5" fill="#4bb8e8"/>
+<line x1="390.0" y1="118.0" x2="312.0" y2="118.0" stroke="#4bb8e8" stroke-width="1.8"/><polygon points="312.0,118.0 318.4,115.3 318.4,120.7" fill="#4bb8e8"/>
+<line x1="390.0" y1="118.0" x2="468.0" y2="118.0" stroke="#4bb8e8" stroke-width="1.8"/><polygon points="468.0,118.0 461.6,120.7 461.6,115.3" fill="#4bb8e8"/>
+<line x1="390.0" y1="118.0" x2="334.8" y2="173.2" stroke="#4bb8e8" stroke-width="2.4"/><polygon points="334.8,173.2 337.5,166.7 341.3,170.5" fill="#4bb8e8"/>
+<line x1="390.0" y1="118.0" x2="390.0" y2="196.0" stroke="#4bb8e8" stroke-width="1.8"/><polygon points="390.0,196.0 387.3,189.6 392.7,189.6" fill="#4bb8e8"/>
+<line x1="390.0" y1="118.0" x2="445.2" y2="173.2" stroke="#4bb8e8" stroke-width="2.4"/><polygon points="445.2,173.2 438.7,170.5 442.5,166.7" fill="#4bb8e8"/>
+<circle cx="390" cy="118" r="3" fill="#888"/>
+<text x="280" y="224" font-size="12" fill="#4bb8e8">every direction: length = 1.000</text>
+<text x="280" y="241" font-size="12" fill="#888">speed is now controlled only by what you multiply by</text>
+</svg>

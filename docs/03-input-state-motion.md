@@ -61,8 +61,46 @@ flickering mess. Do it once so the difference is muscle memory.
 Move right → speed 5. Move right *and* up → speed 5 right plus 5 up, which is
 5·√2 ≈ 7.07 total. Diagonal movement is 41% faster.
 
-Every beginner ships this bug. Fixing it teaches you the one piece of math games
-actually require:
+### What "normalise" actually means
+
+A `Vector2` is two numbers describing **one arrow**. An arrow carries two separate
+pieces of information: **which way** it points (direction) and **how long** it is
+(magnitude). Normalising means *keep the direction, force the length to exactly 1*.
+
+Here is the whole problem and the whole fix in one picture:
+
+![Eight direction vectors from key input: raw input lands on a square so the diagonals are longer, normalised input lands on a circle so all eight are the same length](images/normalize.svg)
+
+Build a direction straight from key presses and each component is `-1`, `0` or `+1`.
+The four cardinal directions come out length `1`, but the four diagonals come out
+length `√2 ≈ 1.414`. The eight endpoints trace a **square**, not a circle — and the
+corners of a square are further from the centre than its edges are.
+
+**Why that matters:** your direction is secretly carrying speed information. When you
+then multiply by `speed`, you are multiplying by *speed × whatever length the
+direction happened to have*. Diagonals get a free 41% bonus.
+
+Normalising divides the vector by its own length, which forces every direction onto a
+**circle** of radius 1. Now direction carries *only* direction, and `speed` is the
+only thing that decides how fast. Two responsibilities that were tangled together
+become independent — the same idea as separating hue from brightness in chapter 02.
+
+The arithmetic is just Pythagoras:
+
+- length of `(x, y)` is `√(x² + y²)`
+- divide both components by that length
+- `(1, 0)` has length `1` → unchanged
+- `(1, 1)` has length `√2` → becomes `(0.707, 0.707)`
+
+That `0.707` is `1/√2`. If you special-cased diagonals by multiplying by `√0.5` you
+found the right answer for the 45° case — normalising is the same answer, derived
+rather than hardcoded, and it also works for a gamepad stick held at 17°.
+
+**The one thing to get right:** a zero-length vector cannot be normalised — you would
+divide by zero. When no keys are held, `(0, 0)` has length `0`. Decide what your code
+does there *before* you run it.
+
+Fixing it teaches you the one piece of math games actually require:
 
 1. Build the input as a **direction vector** — x from left/right keys, y from
    up/down — instead of moving on each axis independently.
